@@ -1,7 +1,5 @@
 """
 Dungeon Maker
-
-
 """
 
 from random import randrange
@@ -75,13 +73,14 @@ class Dungeon():
                 self.grid[
                     (col, row)] = space.terrain(col, row)
 
-    def generate_room(self, tries=3):
+    def generate_room(self, tries=3, width=0, height=0):
         """Create a new room at a random position"""
         x = randrange(0, self.width)
         y = randrange(0, self.height)
         # room = Room(x, y, 3, 3)
-        room = Room(x, y)
-        room.generate()
+        room = Room(x, y, width, height)
+        if width > 0 and height > 0:
+            room.generate()
 
         if self.check_room(room):
             self.rooms.append(room)
