@@ -7,15 +7,19 @@ from random import randrange
 inclusive_range = lambda start, end: range(start, end + 1)
 
 
-class Space():
+class Space:
     minSize = 1
     maxSize = 100
 
     def __init__(self, x, y, width=0, height=0):
         self.x = x
-        self.y = x
+        self.y = y
         self.width = width
         self.height = height
+        self.top = None
+        self.bottom = None
+        self.left = None
+        self.right = None
         self.calculate_sides()
 
     def terrain(self, x, y):
@@ -51,7 +55,7 @@ class Room(Space):
         self.calculate_sides()
 
 
-class Dungeon():
+class Dungeon:
 
     def __init__(self, width, height):
         self.width = width
@@ -117,6 +121,9 @@ class Dungeon():
             for col in range(0, self.width):
                 line += str(self.grid[(row, col)])
             print(line)
+
+    def __repr__(self):
+        return "({0} x {1}))".format(self.width, self.height)
 
 
 dungeon = Dungeon(64, 32)
