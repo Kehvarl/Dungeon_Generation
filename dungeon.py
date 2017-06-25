@@ -83,7 +83,7 @@ class Dungeon:
         y = randrange(0, self.height)
         # room = Room(x, y, 3, 3)
         room = Room(x, y, width, height)
-        if width > 0 and height > 0:
+        if width == 0 and height == 0:
             room.generate()
 
         if self.check_room(room):
@@ -127,11 +127,11 @@ class Dungeon:
 
 
 dungeon = Dungeon(64, 32)
-dungeon.generate_room(5)
-dungeon.generate_room(5)
-dungeon.generate_room(5)
-dungeon.generate_room(5)
-dungeon.generate_room(5)
-dungeon.generate_room(5)
+dungeon.generate_room(5, 3, 3)
+dungeon.generate_room(5, 3, 3)
+dungeon.generate_room(5, 3, 3)
+dungeon.generate_room(5, 3, 3)
+dungeon.generate_room(5, 3, 3)
+dungeon.generate_room(5, 3, 3)
 print(dungeon.rooms)
 dungeon.show_grid()
