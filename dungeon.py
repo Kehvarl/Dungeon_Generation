@@ -4,7 +4,15 @@ Dungeon Maker
 
 from random import randrange
 
-inclusive_range = lambda start, end: range(start, end + 1)
+
+def inclusive_range(start, end):
+    """
+    Produce a Range that includes the End value
+    :param int start: Start
+    :param int end:  End
+    :return: range: from Start to End, inclusive
+    """
+    return range(start, end + 1)
 
 
 class Space:
@@ -56,7 +64,9 @@ class Room(Space):
 
 
 class Dungeon:
-
+    """
+    Dungeon Generator
+    """
     def __init__(self, width, height):
         self.width = width
         self.height = height
