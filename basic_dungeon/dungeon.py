@@ -135,13 +135,13 @@ class Dungeon:
     def __repr__(self):
         return "({0} x {1}))".format(self.width, self.height)
 
-
-dungeon = Dungeon(64, 32)
-dungeon.generate_room(5, 3, 3)
-dungeon.generate_room(5, 3, 3)
-dungeon.generate_room(5, 3, 3)
-dungeon.generate_room(5, 3, 3)
-dungeon.generate_room(5, 3, 3)
-dungeon.generate_room(5, 3, 3)
-print(dungeon.rooms)
-dungeon.show_grid()
+if __name__ == "__main__":
+    dungeon = Dungeon(64, 32)
+    dungeon.generate_room(5, 3, 3)
+    dungeon.generate_room(5, 3, 3)
+    dungeon.generate_room(5, 3, 3)
+    dungeon.generate_room(5, 3, 3)
+    dungeon.generate_room(5, 3, 3)
+    dungeon.generate_room(5, 3, 3)
+    print(dungeon.rooms)
+    dungeon.show_grid()
