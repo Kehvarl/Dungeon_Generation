@@ -18,7 +18,7 @@ class Rect:
 
 
 class Leaf:
-    MIN_LEAF_SIZE = 9
+    MIN_LEAF_SIZE = 11
 
     def __init__(self, x, y, width, height):
         self.x = x
