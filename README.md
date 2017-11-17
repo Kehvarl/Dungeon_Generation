@@ -5,10 +5,6 @@ Some toys to play with generating dungeons for Roguelikes.
 ## Sample Output
 ```
 
-
-
-
-
          #####
          #...#
          #...#
@@ -29,13 +25,6 @@ Some toys to play with generating dungeons for Roguelikes.
    #.......#            #......#
    #.......#            ########
    #########
-
-
-
-
-
-
-
 
 ```
 
