@@ -30,6 +30,11 @@ class Leaf:
         self.corridors = []
 
     def split(self):
+        """
+        Attempt to divide this node into 2 smaller nodes
+        If succesful, call split on each child node
+        :return: False if the node cannot be split
+        """
         if self.width > 1.25 * self.height:
             split_horizontal = False
         elif self.height > 1.25 * self.width:
@@ -45,12 +50,12 @@ class Leaf:
         if split_max < Leaf.MIN_LEAF_SIZE:
             return False
 
+        split = randint(Leaf.MIN_LEAF_SIZE, split_max)
+
         if split_horizontal:
-            split = randint(Leaf.MIN_LEAF_SIZE, split_max)
             self.children.append(Leaf(self.x, self.y, self.width, split))
             self.children.append(Leaf(self.x, self.y + split, self.width, self.height - split))
         else:
-            split = randint(Leaf.MIN_LEAF_SIZE, split_max)
             self.children.append(Leaf(self.x, self.y, split, self.height))
             self.children.append(Leaf(self.x + split, self.y, self.width - split, self.height))
 
@@ -59,16 +64,23 @@ class Leaf:
 
         return True
 
-    def generate_room(self):
+    def generate_room(self, fill=False):
+        """
+        Fill the node with a room
+        :param bool fill: Room fills node completely
+        """
         if self.children:
             for leaf in self.children:
-                leaf.generate_room()
+                leaf.generate_room(fill)
         else:
-            dx = randint(0, 3)
-            dy = randint(0, 3)
-            width = randint(self.width - 3, self.width) - dx
-            height = randint(self.height - 3, self.height) - dy
-            self.room = Rect(self.x + dx, self.y + dy, width, height)
+            if fill:
+                self.room = Rect(self.x, self.y, self.width, self.height)
+            else:
+                dx = randint(0, 3)
+                dy = randint(0, 3)
+                width = randint(self.width - 3, self.width) - dx
+                height = randint(self.height - 3, self.height) - dy
+                self.room = Rect(self.x + dx, self.y + dy, width, height)
 
     def draw_room(self, grid):
         if self.children:
@@ -107,9 +119,9 @@ class BSPDungeon:
             for col in range(0, self.width):
                 self.grid[(row, col)] = " "
 
-    def generate_rooms(self):
+    def generate_rooms(self, fill=False):
         if self.root:
-            self.root.generate_room()
+            self.root.generate_room(fill)
 
     def split(self):
         if self.root:
@@ -130,6 +142,6 @@ class BSPDungeon:
 if __name__ == "__main__":
     dungeon = BSPDungeon(80,25)
     dungeon.split()
-    dungeon.generate_rooms()
+    dungeon.generate_rooms(fill=False)
     dungeon.fill_grid()
     dungeon.show_grid()
