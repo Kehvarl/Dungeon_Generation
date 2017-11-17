@@ -32,10 +32,10 @@ class Space:
 
     def terrain(self, x, y):
         if x == self.left or x == self.right:
-            return 1
+            return "#"
         if y == self.top or y == self.bottom:
-            return 1
-        return 2
+            return "#"
+        return "."
 
     def calculate_sides(self):
         self.top = self.y
@@ -78,7 +78,7 @@ class Dungeon:
         """Set up an empty map grid"""
         for row in range(0, self.height):
             for col in range(0, self.width):
-                self.grid[(row, col)] = 0
+                self.grid[(row, col)] = " "
 
     def add_grid(self, space):
         """Add a space to the map grid"""
@@ -129,11 +129,12 @@ class Dungeon:
         for row in range(0, self.height):
             line = ""
             for col in range(0, self.width):
-                line += str(self.grid[(row, col)])
+                line += str(self.grid.get((row, col), "*"))
             print(line)
 
     def __repr__(self):
         return "({0} x {1}))".format(self.width, self.height)
+
 
 if __name__ == "__main__":
     dungeon = Dungeon(64, 32)
