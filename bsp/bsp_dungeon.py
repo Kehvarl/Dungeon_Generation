@@ -8,6 +8,11 @@ class Rect:
         self.width = width
         self.height = height
 
+    def center(self):
+        center_x = self.x + self.width // 2
+        center_y = self.y + self.height // 2
+        return center_x, center_y
+
     def draw(self, grid):
         for x in range(self.x, self.x + self.width):
             for y in range(self.y, self.y + self.height):
@@ -82,12 +87,16 @@ class Leaf:
                 height = randint(self.height - 3, self.height) - dy
                 self.room = Rect(self.x + dx, self.y + dy, width, height)
 
-    def draw_room(self, grid):
+    def get_room(self, rooms_list):
+        """
+
+        :param list rooms_list:
+        """
         if self.children:
             for leaf in self.children:
-                leaf.draw_room(grid)
+                leaf.get_room(rooms_list)
         else:
-            self.room.draw(grid)
+            rooms_list.append(self.room)
 
 
 class BSPDungeon:
@@ -101,10 +110,12 @@ class BSPDungeon:
       Define an space within each area
       Connect adjacent spaces
     """
+
     def __init__(self, width, height):
         self.width = width
         self.height = height
         self.root = None
+        self.rooms_list = []
         self.grid = {}
         self.init_tree()
         self.init_grid()
@@ -122,14 +133,56 @@ class BSPDungeon:
     def generate_rooms(self, fill=False):
         if self.root:
             self.root.generate_room(fill)
+        self.root.get_room(self.rooms_list)
+
+    def generate_corridors(self):
+        first_room = True
+        new_x, new_y = 0, 0
+        for room in self.rooms_list:
+            if first_room:
+                first_room = False
+                new_x, new_y = room.center()
+            else:
+                prev_x, prev_y = new_x, new_y
+                new_x, new_y = room.center()
+                # Randomly determine corridor arrangement.
+                if randint(0, 1) == 1:
+                    # Horizontal tunnel, then Vertical
+                    self.create_h_tunnel(prev_x, new_x, prev_y)
+                    self.create_v_tunnel(prev_y, new_y, new_x)
+                else:
+                    # Vertical tunnel, then Horizontal
+                    self.create_v_tunnel(prev_y, new_y, prev_x)
+                    self.create_h_tunnel(prev_x, new_x, new_y)
+                pass
+
+    def create_h_tunnel(self, x1, x2, y):
+        """
+        Create a tunnel
+        :param int x1: Start of Tunnel
+        :param int x2: End of Tunnel
+        :param int y: The y position of the tunnel
+        """
+        for x in range(min(x1, x2), max(x1, x2) + 1):
+            self.grid[(y, x)] = "."
+
+    def create_v_tunnel(self, y1, y2, x):
+        """
+        Create a vertical tunnel
+        :param int y1: Start of Tunnel
+        :param int y2: End of Tunnel
+        :param int x: X position of the tunnel
+        """
+        for y in range(min(y1, y2), max(y1, y2) + 1):
+            self.grid[(y, x)] = "."
 
     def split(self):
         if self.root:
             self.root.split()
 
     def fill_grid(self):
-        if self.root:
-            self.root.draw_room(self.grid)
+        for room in self.rooms_list:
+            room.draw(self.grid)
 
     def show_grid(self):
         for row in range(0, self.height):
@@ -140,8 +193,9 @@ class BSPDungeon:
 
 
 if __name__ == "__main__":
-    dungeon = BSPDungeon(80,25)
+    dungeon = BSPDungeon(80, 25)
     dungeon.split()
-    dungeon.generate_rooms(fill=False)
+    dungeon.generate_rooms(fill=True)
     dungeon.fill_grid()
+    dungeon.generate_corridors()
     dungeon.show_grid()
