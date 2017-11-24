@@ -79,6 +79,12 @@ class Leaf:
                 leaf.generate_room(fill)
         else:
             if fill:
+                if self.x > 0:
+                    self.x -= 1
+                    self.width += 1
+                if self.y > 0:
+                    self.y -= 1
+                    self.height += 1
                 self.room = Rect(self.x, self.y, self.width, self.height)
             else:
                 dx = randint(0, 3)
