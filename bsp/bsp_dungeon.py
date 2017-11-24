@@ -2,27 +2,35 @@ from random import random, randint
 
 
 class Rect:
+    """
+    A rectangular space
+    """
     def __init__(self, x, y, width, height):
+        """
+
+        :param int x:
+        :param int y:
+        :param int width:
+        :param int height:
+        """
         self.x = x
         self.y = y
         self.width = width
         self.height = height
 
     def center(self):
+        """
+        :return int, int: the approximate coordinates for the center this space
+        """
         center_x = self.x + self.width // 2
         center_y = self.y + self.height // 2
         return center_x, center_y
 
-    def draw(self, grid):
-        for x in range(self.x, self.x + self.width):
-            for y in range(self.y, self.y + self.height):
-                if x == self.x or x == self.x + self.width - 1 or y == self.y or y == self.y + self.height - 1:
-                    grid[(y, x)] = "#"
-                else:
-                    grid[(y, x)] = "."
-
 
 class Leaf:
+    """
+    A node in a Binary Spanning Tree
+    """
     MIN_LEAF_SIZE = 11
 
     def __init__(self, x, y, width, height):
@@ -37,7 +45,7 @@ class Leaf:
     def split(self):
         """
         Attempt to divide this node into 2 smaller nodes
-        If succesful, call split on each child node
+        If successful, call split on each child node
         :return: False if the node cannot be split
         """
         if self.width > 1.25 * self.height:
@@ -71,7 +79,7 @@ class Leaf:
 
     def generate_room(self, fill=False):
         """
-        Fill the node with a room
+        Create a room within the node
         :param bool fill: Room fills node completely
         """
         if self.children:
@@ -93,14 +101,13 @@ class Leaf:
                 height = randint(self.height - 3, self.height) - dy
                 self.room = Rect(self.x + dx, self.y + dy, width, height)
 
-    def get_room(self, rooms_list):
+    def get_rooms(self, rooms_list):
         """
-
         :param list rooms_list:
         """
         if self.children:
             for leaf in self.children:
-                leaf.get_room(rooms_list)
+                leaf.get_rooms(rooms_list)
         else:
             rooms_list.append(self.room)
 
@@ -136,12 +143,26 @@ class BSPDungeon:
             for col in range(0, self.width):
                 self.grid[(row, col)] = " "
 
+    def split(self):
+        """
+        Divide the space into leaves on a binary spanning tree
+        """
+        if self.root:
+            self.root.split()
+
     def generate_rooms(self, fill=False):
+        """
+        Fill each child node of the tree with a room
+        :param bool fill: If True, rooms take up the entirety of a node
+        """
         if self.root:
             self.root.generate_room(fill)
-        self.root.get_room(self.rooms_list)
+        self.root.get_rooms(self.rooms_list)
 
     def generate_corridors(self):
+        """
+        Add connecting corridors between rooms
+        """
         first_room = True
         new_x, new_y = 0, 0
         for room in self.rooms_list:
@@ -182,15 +203,22 @@ class BSPDungeon:
         for y in range(min(y1, y2), max(y1, y2) + 1):
             self.grid[(y, x)] = "."
 
-    def split(self):
-        if self.root:
-            self.root.split()
-
     def fill_grid(self):
+        """
+        Draw the rooms into the map grid
+        """
         for room in self.rooms_list:
-            room.draw(self.grid)
+            for x in range(room.x, room.x + room.width):
+                for y in range(room.y, room.y + room.height):
+                    if x == room.x or x == room.x + room.width - 1 or y == room.y or y == room.y + room.height - 1:
+                        self.grid[(y, x)] = "#"
+                    else:
+                        self.grid[(y, x)] = "."
 
     def show_grid(self):
+        """
+        Print the map grid
+        """
         for row in range(0, self.height):
             line = ""
             for col in range(0, self.width):
