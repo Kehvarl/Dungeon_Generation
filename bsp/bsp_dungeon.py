@@ -59,9 +59,9 @@ class BSPDungeon:
         Draw the rooms into the map grid
         """
         for room in self.rooms_list:
-            for x in range(room.x, room.x + room.width):
-                for y in range(room.y, room.y + room.height):
-                    if x == room.x or x == room.x + room.width - 1 or y == room.y or y == room.y + room.height - 1:
+            for x in range(room.x1, room.x2):
+                for y in range(room.y1, room.y2):
+                    if x == room.x1 or x == room.x2 - 1 or y == room.y1 or y == room.y2 - 1:
                         self.game_map.tiles[x][y].block(True)
                     else:
                         self.game_map.tiles[x][y].block(False)

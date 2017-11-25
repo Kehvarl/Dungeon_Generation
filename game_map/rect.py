@@ -10,26 +10,12 @@ class Rect:
         :param int width:
         :param int height:
         """
-        self.x = x
-        self.y = y
+        self.x1 = x
+        self.y1 = y
+        self.x2 = x + width
+        self.y2 = y + height
         self.width = width
         self.height = height
-
-    @property
-    def x1(self):
-        return self.x
-
-    @property
-    def y1(self):
-        return self.y
-
-    @property
-    def x2(self):
-        return self.x + self.width
-
-    @property
-    def y2(self):
-        return self.y + self.height
 
     def intersect(self, other):
         """
@@ -44,6 +30,6 @@ class Rect:
         """
         :return int, int: the approximate coordinates for the center this space
         """
-        center_x = self.x + self.width // 2
-        center_y = self.y + self.height // 2
+        center_x = self.x1 + self.width // 2
+        center_y = self.y1 + self.height // 2
         return center_x, center_y
