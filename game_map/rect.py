@@ -28,8 +28,9 @@ class Rect:
 
     def center(self):
         """
-        :return int, int: the approximate coordinates for the center this space
+        Get the center of the room
+        :return int, int: x position, y position
         """
-        center_x = self.x1 + self.width // 2
-        center_y = self.y1 + self.height // 2
+        center_x = int((self.x1 + self.x2) / 2)
+        center_y = int((self.y1 + self.y2) / 2)
         return center_x, center_y
