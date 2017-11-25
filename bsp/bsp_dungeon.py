@@ -1,4 +1,5 @@
 from random import randint
+from game_map.game_map import GameMap
 from bsp.bsp_leaf import Leaf
 
 
@@ -14,42 +15,58 @@ class BSPDungeon:
       Connect adjacent spaces
     """
 
-    def __init__(self, width, height):
-        self.width = width
-        self.height = height
+    def __init__(self, game_map):
+        """
+        :param GameMap game_map:
+        """
         self.root = None
         self.rooms_list = []
-        self.grid = {}
+        self.game_map = game_map
+        self.width = self.game_map.width
+        self.height = self.game_map.height
         self.init_tree()
-        self.init_grid()
+        self.game_map.clear_map()
 
     def init_tree(self):
         """Set up an empty map grid"""
         self.root = Leaf(0, 0, self.width, self.height)
 
-    def init_grid(self):
-        """Set up an empty map grid"""
-        for row in range(0, self.height):
-            for col in range(0, self.width):
-                self.grid[(row, col)] = " "
+    def generate(self, fill=False):
+        self._split()
+        self._generate_rooms(fill)
+        self._generate_corridors()
 
-    def split(self):
+    def _split(self):
         """
         Divide the space into leaves on a binary spanning tree
         """
         if self.root:
             self.root.split()
 
-    def generate_rooms(self, fill=False):
+    def _generate_rooms(self, fill=False):
         """
         Fill each child node of the tree with a room
+        Collect all created rooms into a list
         :param bool fill: If True, rooms take up the entirety of a node
         """
         if self.root:
             self.root.generate_room(fill)
         self.root.get_rooms(self.rooms_list)
+        self._fill_grid()
 
-    def generate_corridors(self):
+    def _fill_grid(self):
+        """
+        Draw the rooms into the map grid
+        """
+        for room in self.rooms_list:
+            for x in range(room.x, room.x + room.width):
+                for y in range(room.y, room.y + room.height):
+                    if x == room.x or x == room.x + room.width - 1 or y == room.y or y == room.y + room.height - 1:
+                        self.game_map.tiles[x][y].block(True)
+                    else:
+                        self.game_map.tiles[x][y].block(False)
+
+    def _generate_corridors(self):
         """
         Add connecting corridors between rooms
         """
@@ -65,15 +82,15 @@ class BSPDungeon:
                 # Randomly determine corridor arrangement.
                 if randint(0, 1) == 1:
                     # Horizontal tunnel, then Vertical
-                    self.create_h_tunnel(prev_x, new_x, prev_y)
-                    self.create_v_tunnel(prev_y, new_y, new_x)
+                    self._create_h_tunnel(prev_x, new_x, prev_y)
+                    self._create_v_tunnel(prev_y, new_y, new_x)
                 else:
                     # Vertical tunnel, then Horizontal
-                    self.create_v_tunnel(prev_y, new_y, prev_x)
-                    self.create_h_tunnel(prev_x, new_x, new_y)
+                    self._create_v_tunnel(prev_y, new_y, prev_x)
+                    self._create_h_tunnel(prev_x, new_x, new_y)
                 pass
 
-    def create_h_tunnel(self, x1, x2, y):
+    def _create_h_tunnel(self, x1, x2, y):
         """
         Create a tunnel
         :param int x1: Start of Tunnel
@@ -81,9 +98,9 @@ class BSPDungeon:
         :param int y: The y position of the tunnel
         """
         for x in range(min(x1, x2), max(x1, x2) + 1):
-            self.grid[(y, x)] = "."
+            self.game_map.tiles[x][y].block(False)
 
-    def create_v_tunnel(self, y1, y2, x):
+    def _create_v_tunnel(self, y1, y2, x):
         """
         Create a vertical tunnel
         :param int y1: Start of Tunnel
@@ -91,35 +108,11 @@ class BSPDungeon:
         :param int x: X position of the tunnel
         """
         for y in range(min(y1, y2), max(y1, y2) + 1):
-            self.grid[(y, x)] = "."
-
-    def fill_grid(self):
-        """
-        Draw the rooms into the map grid
-        """
-        for room in self.rooms_list:
-            for x in range(room.x, room.x + room.width):
-                for y in range(room.y, room.y + room.height):
-                    if x == room.x or x == room.x + room.width - 1 or y == room.y or y == room.y + room.height - 1:
-                        self.grid[(y, x)] = "#"
-                    else:
-                        self.grid[(y, x)] = "."
-
-    def show_grid(self):
-        """
-        Print the map grid
-        """
-        for row in range(0, self.height):
-            line = ""
-            for col in range(0, self.width):
-                line += str(self.grid.get((row, col), "*"))
-            print(line)
+            self.game_map.tiles[x][y].block(False)
 
 
 if __name__ == "__main__":
-    dungeon = BSPDungeon(80, 25)
-    dungeon.split()
-    dungeon.generate_rooms(fill=True)
-    dungeon.fill_grid()
-    dungeon.generate_corridors()
-    dungeon.show_grid()
+    test_map = GameMap(80, 25)
+    dungeon = BSPDungeon(test_map)
+    dungeon.generate(fill=True)
+    print(dungeon.game_map.printable_map())
