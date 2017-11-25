@@ -1,5 +1,6 @@
 from random import random, randint
-from bsp.rect import Rect
+
+from game_map.rect import Rect
 
 
 class Leaf:
