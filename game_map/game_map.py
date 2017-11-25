@@ -24,6 +24,15 @@ class GameMap:
              for _ in range(self.height)]
             for _ in range(self.width)]
 
+    def point_in_map(self, x, y):
+        """
+        Checks if a given point falls within the current map
+        :param x: Target X position
+        :param y: Target Y position
+        :return: True if desired location is within map bounds
+        """
+        return 0 <= x < self.width and 0 <= y < self.height
+
     def printable_map(self, block_char="#", open_char="."):
         """
         Produce a string representation of the current Game Map
