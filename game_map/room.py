@@ -1,5 +1,5 @@
+from game_map.direction import Direction
 from game_map.rect import Rect
-from miner.direction import Direction
 
 
 class Room(Rect):

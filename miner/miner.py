@@ -1,9 +1,8 @@
 from random import randint, choice
 
+from game_map.direction import Direction
 from game_map.game_map import GameMap
-
-from miner.direction import Direction
-from miner.room import Room
+from game_map.room import Room
 
 
 class Miner:
@@ -42,6 +41,16 @@ class Miner:
         self.features.append(room)
         self.game_map.create_room(room)
 
+    def generate_features(self, max_features=10, min_features=5):
+        num_features = 0
+        repeat = 5
+        while num_features < min_features and repeat > 0:
+            repeat -= 1
+            for r in range(num_features, max_features):
+                if self.add_feature(choice(self.features)):
+                    num_features += 1
+        return num_features
+
     def add_feature(self, room, width=None, height=None):
         """
         Add a feature to the map
@@ -52,11 +61,11 @@ class Miner:
         """
         direction = Direction.random_direction()
         if width is None:
-            width = randint(3, 11)
+            width = randint(5, 9)
         if height is None:
-            height = randint(3, 11)
+            height = randint(5, 7)
 
-        gap = randint(0, 5)
+        gap = randint(0, 3)
 
         x, y = room.get_wall(direction)
         if direction == Direction.UP:
@@ -97,21 +106,13 @@ class Miner:
         else:
             # Vertical tunnel, then Horizontal
             self.game_map.create_v_tunnel(y2, y1, x2)
-            self.game_map.create_h_tunnel(x1, x1, y1)
+            self.game_map.create_h_tunnel(x2, x1, y1)
         pass
 
 
 if __name__ == "__main__":
     test_map = GameMap(80, 25)
     miner = Miner(test_map)
-    miner.add_feature(choice(miner.features))
-    miner.add_feature(choice(miner.features))
-    miner.add_feature(choice(miner.features))
-    miner.add_feature(choice(miner.features))
-    miner.add_feature(choice(miner.features))
-    miner.add_feature(choice(miner.features))
-    miner.add_feature(choice(miner.features))
-    miner.add_feature(choice(miner.features))
-    miner.add_feature(choice(miner.features))
+    print(miner.generate_features(20))
 
     print(miner.game_map.printable_map())

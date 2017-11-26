@@ -30,8 +30,8 @@ class GameMap:
         :param Map.room.Room room: The room in the map
         """
         # Make interior tiles passable
-        for x in range(room.x1 + 1, room.x2):
-            for y in range(room.y1 + 1, room.y2):
+        for x in range(room.x1, room.x2 + 1):
+            for y in range(room.y1, room.y2 + 1):
                 self.tiles[x][y].block()
 
     def create_h_tunnel(self, x1, x2, y):
@@ -61,7 +61,7 @@ class GameMap:
         :param y: Target Y position
         :return: True if desired location is within map bounds
         """
-        return 0 <= x < self.width and 0 <= y < self.height
+        return 0 < x < self.width - 1 and 0 < y < self.height - 1
 
     def room_in_map(self, room):
         """
