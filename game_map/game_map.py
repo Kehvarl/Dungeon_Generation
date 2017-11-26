@@ -24,6 +24,36 @@ class GameMap:
              for _ in range(self.height)]
             for _ in range(self.width)]
 
+    def create_room(self, room):
+        """
+        Set the tiles of a room to be passable
+        :param Map.room.Room room: The room in the map
+        """
+        # Make interior tiles passable
+        for x in range(room.x1 + 1, room.x2):
+            for y in range(room.y1 + 1, room.y2):
+                self.tiles[x][y].block()
+
+    def create_h_tunnel(self, x1, x2, y):
+        """
+        Create a tunnel
+        :param int x1: Start of Tunnel
+        :param int x2: End of Tunnel
+        :param int y: The y position of the tunnel
+        """
+        for x in range(min(x1, x2), max(x1, x2) + 1):
+            self.tiles[x][y].block(False)
+
+    def create_v_tunnel(self, y1, y2, x):
+        """
+        Create a vertical tunnel
+        :param int y1: Start of Tunnel
+        :param int y2: End of Tunnel
+        :param int x: X position of the tunnel
+        """
+        for y in range(min(y1, y2), max(y1, y2) + 1):
+            self.tiles[x][y].block(False)
+
     def point_in_map(self, x, y):
         """
         Checks if a given point falls within the current map
@@ -32,6 +62,14 @@ class GameMap:
         :return: True if desired location is within map bounds
         """
         return 0 <= x < self.width and 0 <= y < self.height
+
+    def room_in_map(self, room):
+        """
+        Checks if a given room fits completely on the map
+        :param room:
+        :return: True if desired location is within map bounds
+        """
+        return self.point_in_map(room.x1, room.y1) and self.point_in_map(room.x2, room.y2)
 
     def printable_map(self, block_char="#", open_char="."):
         """
