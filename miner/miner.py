@@ -49,6 +49,7 @@ class Miner:
     def select_feature(self, x, y, direction):
         x2, y2 = x, y
         if randint(0, 1) == 0:
+            # Corridor
             if direction == Direction.UP:
                 x2 = x
                 y2 = randint(1, y)
@@ -62,6 +63,7 @@ class Miner:
                 x2 = randint(1, x)
                 y2 = y
         else:
+            # Room
             if direction == Direction.UP:
                 x2 = randint(x, self.width - 1)
                 y2 = randint(1, y)
